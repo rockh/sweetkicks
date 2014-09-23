@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<widget id="com.tripleis.app.sweetkicks" version="0.0.1" xmlns="http://www.w3.org/ns/widgets"
+        xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>SweetKicks</name>
+    <description> A simple and easy to use app for counting fetal movements during pregnancy. </description>
+    <author email="talk@tripleis.com" href="http://tripleis.com/"> TripleIS </author>
+    <content src="index.html"/>
+    <access origin="*"/>
+    <preference name="webviewbounce" value="false"/>
+    <preference name="UIWebViewBounce" value="false"/>
+    <preference name="DisallowOverscroll" value="true"/>
+    <preference name="BackupWebStorage" value="none"/>
+    <preference name="Orientation" value="portrait"/>
+    <feature name="StatusBar">
+        <param name="ios-package" value="CDVStatusBar" onload="true"/>
+    </feature>
+
+    <platform name="android">
+        <icon src="www/res/android/mdpi.png" density="ldpi" />
+        <icon src="www/res/android/mdpi.png" density="mdpi" />
+        <icon src="www/res/android/hdpi.png" density="hdpi" />
+        <icon src="www/res/android/xhdpi.png" density="xhdpi" />
+        <icon src="www/res/android/xxhdpi.png" density="xxhdpi" />
+        <icon src="www/res/android/xxxhdpi.png" density="xxxhdpi" />
+    </platform>
+
+</widget>

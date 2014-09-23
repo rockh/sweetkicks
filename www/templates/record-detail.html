@@ -1,0 +1,15 @@
+<!--
+  This template loads for the 'tab.record-detail' state (app.js)
+  'record' is a $scope variable created in the RecordsCtrl controller (controllers.js)
+  The RecordsCtrl pulls data from the Records service (service.js)
+  The Records service returns an array of record data
+-->
+<ion-view title="{{record.id}}">
+  <ion-content has-header="true" padding="true">
+     <div class="list">
+         <div class="item">Count: {{record.kickCount}}</div>
+         <div class="item">Single kicks: {{record.actualKicks}}</div>
+         <div class="item">Last kick time: {{lastKickTime}}</div>
+     </div>
+  </ion-content>
+</ion-view>

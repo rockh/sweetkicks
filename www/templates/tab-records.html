@@ -1,0 +1,13 @@
+<ion-view title="Records">
+    <!--<ion-nav-buttons side="right">-->
+        <!--<a class="button button-icon icon ion-ios7-refresh-outline" ng-click="refresh()"></a>-->
+    <!--</ion-nav-buttons>-->
+  <ion-content class="has-header">
+    <ion-list>
+      <ion-item ng-repeat="record in records" type="item-text-wrap" href="#/tab/record/{{record.id}}">
+        {{record.id}} &nbsp;
+          <span class="badge badge-calm">{{record.kickCount}} / {{record.actualKicks}}</span>
+      </ion-item>
+    </ion-list>
+  </ion-content>
+</ion-view>

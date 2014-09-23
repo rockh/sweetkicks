@@ -1,0 +1,24 @@
+<ion-view title="SweetKicks Counter">
+  <ion-content class="has-header padding">
+
+    <!--<div class="row" style="height:100px;line-height:100px;">-->
+        <!--<div class="col text-center" style="font-size:26px;color:#43cee6;" ng-show="startTimer">{{oneHourCount}}</div>-->
+    <!--</div>-->
+
+  <div class="row" style="font-size:22px;color:#43cee6;">
+      <div class="col col-50">{{today}}</div>
+      <div class="col col-50 text-right">{{daysLeft}}</div>
+  </div>
+
+  <div class="row row-bottom" style="height:100px; line-height:100px;">
+      <div class="col text-center" style="font-size:40px;color:#43cee6;" >{{kickCount}}/{{actualKicks}}</div>
+  </div>
+
+    <div class="row" data-tap-disabled="true">
+    	<!--<button class="button button-outline button-calm round-button" ng-show="!startTimer" ng-click="startSession()">START</button>-->
+        <button class="button button-outline button-calm round-button" ng-click="countKicks()">KICK +1</button>
+    </div>
+
+
+  </ion-content>
+</ion-view>
