@@ -6,6 +6,9 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services'])
         var pre0 = function(x) {
             return x < 10 ? '0' + x : x;
         };
+
+        $scope.btnKickHtml = Settings.getHtmlOnKickButton();
+        $scope.btnKickStyle = $scope.btnKickHtml.length == 7 ? 'single-line-on-round-buton' : 'with-baby-name-on-round-button';
         $scope.today = DateUtil.today();
         $scope.daysLeft = Settings.daysLeft();
         $scope.record = Records.get($scope.today);
@@ -80,10 +83,11 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services'])
         $scope.lastKickTime = new Date($scope.record.updatedAt).toLocaleString();
     })
 
-    .controller('SettingsCtrl', function ($scope, $window, LocalStorage) {
+    .controller('SettingsCtrl', function ($scope, $window, Settings, LocalStorage) {
         var INPUT_DUE_DATE = 'dueDate';
         var mySavedDate = LocalStorage.getInt(INPUT_DUE_DATE);
         var dateField = document.querySelector('#dueDate');
+
 
         var myDate = new Date();
 
@@ -101,5 +105,13 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services'])
                     myDate = date;
                 }
             });
-        }
+        };
+
+        $scope.babyName = Settings.getBabyName();
+        $scope.saveBabyName = function() {
+            var name = document.querySelector('#babyName').value;
+            if ( name!== $scope.babyName) {
+                Settings.saveBabyName(name);
+            }
+        };
     });

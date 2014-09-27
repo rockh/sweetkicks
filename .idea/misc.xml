@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="IdProvider" IDEtalkID="B51F43E9A9634102B32C6A90D9CC3E71" />
-  <component name="JsBowerSettings">
-    <exe-path>/usr/local/bin/bower</exe-path>
-    <config-path />
-  </component>
   <component name="ProjectInspectionProfilesVisibleTreeState">
     <entry key="Project Default">
       <profile-state>

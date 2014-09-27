@@ -15,8 +15,7 @@
   </div>
 
     <div class="row" data-tap-disabled="true">
-    	<!--<button class="button button-outline button-calm round-button" ng-show="!startTimer" ng-click="startSession()">START</button>-->
-        <button class="button button-outline button-calm round-button" ng-click="countKicks()">KICK +1</button>
+        <a class="button button-outline button-calm round-button {{btnKickStyle}}" ng-click="countKicks()" ng-bind-html="btnKickHtml">KICK +1</a>
     </div>
 
 

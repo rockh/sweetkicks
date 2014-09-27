@@ -6,6 +6,11 @@
               <span class="input-label">Due Date</span>
               <input id="dueDate" type="text" placeholder="When is your due date?" ng-click="pickDate()" readonly/>
           </label>
+          <label class="item item-input item-stacked-label">
+              <i class="icon ion-ios7-heart-outline placeholder-icon"></i>
+              <span class="input-label">Baby Name</span>
+              <input id="babyName" type="text" placeholder="Will show on the kick button" ng-change="saveBabyName()" ng-model="babyName"/>
+          </label>
       </div>
   </ion-content>
 </ion-view>
