@@ -11,6 +11,11 @@
               <span class="input-label">Baby Name</span>
               <input id="babyName" type="text" placeholder="Will show on the kick button" ng-change="saveBabyName()" ng-model="babyName"/>
           </label>
+          <label class="item item-input item-select">
+              <i class="icon ion-ios7-browsers-outline placeholder-icon"></i>
+              <div class="input-label">Theme</div>
+              <select id="myTheme" ng-change="onThemeChange()" ng-model="myTheme" ng-options="theme.label for theme in themes"></select>
+          </label>
       </div>
   </ion-content>
 </ion-view>

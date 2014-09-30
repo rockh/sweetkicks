@@ -6,7 +6,7 @@
     <ion-list>
       <ion-item ng-repeat="record in records" type="item-text-wrap" href="#/tab/record/{{record.id}}">
         {{record.id}} &nbsp;
-          <span class="badge badge-calm">{{record.kickCount}} / {{record.actualKicks}}</span>
+          <span class="badge badge-{{myTheme}}">{{record.kickCount}} / {{record.actualKicks}}</span>
       </ion-item>
     </ion-list>
   </ion-content>

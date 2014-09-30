@@ -83,7 +83,7 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services'])
         $scope.lastKickTime = new Date($scope.record.updatedAt).toLocaleString();
     })
 
-    .controller('SettingsCtrl', function ($scope, $window, Settings, LocalStorage) {
+    .controller('SettingsCtrl', function ($rootScope, $scope, $window, Settings, LocalStorage) {
         var INPUT_DUE_DATE = 'dueDate';
         var mySavedDate = LocalStorage.getInt(INPUT_DUE_DATE);
         var dateField = document.querySelector('#dueDate');
@@ -113,5 +113,12 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services'])
             if ( name!== $scope.babyName) {
                 Settings.saveBabyName(name);
             }
+        };
+
+        $scope.themes = Settings.getThemes();
+        $scope.myTheme = $scope.themes[Settings.getThemeId()];
+        $scope.onThemeChange = function() {
+            Settings.setThemeId(document.querySelector('#myTheme').value);
+            Settings.provision($rootScope);
         };
     });

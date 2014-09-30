@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('sweetkicks', ['ionic', 'sweetkicks.controllers', 'sweetkicks.utils'])
 
-    .run(function ($ionicPlatform) {
+    .run(function ($ionicPlatform, $rootScope, Settings) {
         $ionicPlatform.ready(function () {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
@@ -46,6 +46,9 @@ angular.module('sweetkicks', ['ionic', 'sweetkicks.controllers', 'sweetkicks.uti
                 );
             }
         });
+
+        // global settings: theme
+        Settings.provision($rootScope);
     })
 
     .config(function ($stateProvider, $urlRouterProvider) {
@@ -106,6 +109,4 @@ angular.module('sweetkicks', ['ionic', 'sweetkicks.controllers', 'sweetkicks.uti
 
         // if none of the above states are matched, use this as the fallback
         $urlRouterProvider.otherwise('/tab/home');
-
     });
-

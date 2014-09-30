@@ -44,6 +44,8 @@ angular.module('sweetkicks.services', [])
     .factory('Settings', function (LocalStorage) {
         var KEY_DUE_DATE = 'dueDate';
         var KEY_BABY_NAME = 'babyName';
+        var KEY_MY_THEME = 'myTheme';
+        var themes = [{ label: 'Baby Blue', value: 'calm' }, { label: 'Baby Pink', value: 'assertive' }];
 
         return {
             daysLeft: function() {
@@ -61,11 +63,28 @@ angular.module('sweetkicks.services', [])
                 return !name || name==='undefined' ? 'KICK +1' : name + '<br/>KICK +1';
             },
             saveBabyName: function(name) {
-                //console.debug('Save baby name => ' + name);
                 LocalStorage.set(KEY_BABY_NAME, name);
             },
             getBabyName: function() {
                 return LocalStorage.get(KEY_BABY_NAME);
+            },
+            setThemeId: function(themeId) {
+                LocalStorage.set(KEY_MY_THEME, themeId);
+            },
+            getThemeId: function() {
+                return LocalStorage.get(KEY_MY_THEME, 0);
+            },
+            getTheme: function() {
+                var themeId = this.getThemeId();
+                return themes[themeId];
+            },
+            getThemes: function() {
+                return themes;
+            },
+            provision: function(root) {
+                var myThemeValue = this.getTheme().value;
+                root.barTheme = 'bar-' +  myThemeValue;
+                root.myTheme = myThemeValue;
             }
         };
     });
