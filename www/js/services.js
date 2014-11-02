@@ -17,6 +17,9 @@ angular.module('sweetkicks.services', [])
                         records.push(LocalStorage.getObject(key))
                     }
                 }
+                records.sort(function(a, b) {
+                    return b.updatedAt - a.updatedAt;
+                });
                 return records;
             },
             get: function (recordId) {
