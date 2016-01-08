@@ -1,0 +1,16 @@
+<!--
+  This template loads for the 'tab.record-detail' state (app.js)
+  'record' is a $scope variable created in the RecordsCtrl controller (controllers.js)
+  The RecordsCtrl pulls data from the Records service (service.js)
+  The Records service returns an array of record data
+-->
+<ion-view title="{{strDate}}">
+    <ion-content>
+        <ion-list>
+            <ion-item ng-repeat="klog in kickLog" type="item-text-wrap" href="#" ng-class="'my-item-'+currentSelectedTheme">
+                <span class="badge badge-{{currentSelectedTheme}}" style="left:30px;right:auto;">{{klog.kick}}</span>
+                <span style="float:right;">{{klog.time}}</span>
+            </ion-item>
+        </ion-list>
+    </ion-content>
+</ion-view>

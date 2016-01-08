@@ -1,0 +1,21 @@
+<ion-view title="Settings">
+    <ion-content class="has-header">
+        <div class="list">
+            <label class="item item-input item-stacked-label" ng-class="'my-item-'+currentSelectedTheme">
+                <i class="icon ion-ios-calendar-outline placeholder-icon {{currentSelectedTheme}}"></i>
+                <span class="input-label {{currentSelectedTheme}}">Due Date</span>
+                <input id="dueDate" type="text" placeholder="When is your due date?" ng-click="pickDate()" readonly/>
+            </label>
+            <label class="item item-input item-stacked-label" ng-class="'my-item-'+currentSelectedTheme">
+                <i class="icon ion-ios-heart-outline placeholder-icon {{currentSelectedTheme}}"></i>
+                <span class="input-label {{currentSelectedTheme}}">Baby Name</span>
+                <input id="babyName" type="text" maxlength="10" placeholder="Will show on the kick button" ng-change="saveBabyName()" ng-model="babyName"/>
+            </label>
+            <label class="item item-input item-select" ng-class="'my-item-'+currentSelectedTheme">
+                <i class="icon ion-ios-browsers-outline placeholder-icon {{currentSelectedTheme}}"></i>
+                <div class="input-label {{currentSelectedTheme}}">Theme</div>
+                <select id="myTheme" ng-change="changeTheme()" ng-model="data.selectedTheme" ng-options="k as v for (k, v) in data.themes"></select>
+            </label>
+        </div>
+    </ion-content>
+</ion-view>

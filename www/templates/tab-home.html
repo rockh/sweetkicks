@@ -1,0 +1,22 @@
+<ion-view view-title="SweetKicks" cache-view="false">
+    <ion-content class="padding">
+
+        <!--<div class="row" style="height:100px;line-height:100px;">-->
+        <!--<div class="col text-center" style="font-size:26px;color:#43cee6;" ng-show="startTimer">{{oneHourCount}}</div>-->
+        <!--</div>-->
+
+        <div class="row {{currentSelectedTheme}}" style="font-size:22px;">
+            <div class="col col-50">{{today}}</div>
+            <div class="col col-50 text-right">{{daysLeft}}</div>
+        </div>
+
+        <div class="row row-bottom" style="height:100px; line-height:100px;">
+            <div class="col text-center {{currentSelectedTheme}}" style="font-size:40px;" >{{kickCount}}/{{actualKicks}}</div>
+        </div>
+
+        <div class="row" data-tap-disabled="true">
+            <a class="button button-outline button-{{currentSelectedTheme}} round-button {{btnKickStyle}}" ng-click="countKicks()" ng-bind-html="btnKickHtml">KICK +1</a>
+        </div>
+
+    </ion-content>
+</ion-view>
