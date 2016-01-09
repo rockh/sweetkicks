@@ -140,7 +140,7 @@ angular.module('sweetkicks.services', [])
         var self = {};
 
         self.getCurrentGlobalTheme = function () {
-            return LocalStorage.get(K_CURRENT_GLOBAL_THEME, themes[0]);
+            return LocalStorage.get(K_CURRENT_GLOBAL_THEME, 'calm');
         };
 
         self.setCurrentGlobalTheme = function (theme) {
