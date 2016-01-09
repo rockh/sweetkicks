@@ -1,4 +1,4 @@
-angular.module('sweetkicks.controllers', ['sweetkicks.services'])
+angular.module('sweetkicks.controllers', ['sweetkicks.services', 'ngCordova'])
 
     .controller('HomeCtrl', function ($scope, $timeout, $rootScope, Records, Settings, DateUtil) {
 
@@ -55,7 +55,7 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services'])
         console.log('kick log', $scope.kickLog);
     })
 
-    .controller('SettingsCtrl', function ($rootScope, $scope, $window, Settings, LocalStorage) {
+    .controller('SettingsCtrl', function ($rootScope, $scope, $window, $cordovaDatePicker, Settings, LocalStorage) {
         var INPUT_DUE_DATE = 'dueDate';
         var mySavedDate = LocalStorage.getInt(INPUT_DUE_DATE);
         var dateField = document.querySelector('#dueDate');
@@ -69,7 +69,16 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services'])
         }
 
         $scope.pickDate = function() {
-            $window.plugins.datePicker.show({date: myDate, mode: 'date'}, function(date){
+            var options = {date: myDate, mode: 'date'};
+//            $window.plugins.datePicker.show(options, function(date){
+//                var t = date.getTime();
+//                if (!isNaN(t)) {
+//                    LocalStorage.set(INPUT_DUE_DATE, t);
+//                    dateField.value = date.toLocaleDateString();
+//                    myDate = date;
+//                }
+//            });
+            $cordovaDatePicker.show(options).then(function(date){
                 var t = date.getTime();
                 if (!isNaN(t)) {
                     LocalStorage.set(INPUT_DUE_DATE, t);
