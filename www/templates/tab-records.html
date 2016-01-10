@@ -9,5 +9,11 @@
                 <span class="badge badge-{{currentSelectedTheme}}">{{record.kickCount}} / {{record.actualKicks}}</span>
             </ion-item>
         </ion-list>
+
+        <div class="card" ng-show="records.length === 0">
+            <div class="item item-text-wrap {{currentSelectedTheme}}">
+                You haven't got any kick records to show. Just press the circle button 'KICK +1' on the counter tab.
+            </div>
+        </div>
     </ion-content>
 </ion-view>

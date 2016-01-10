@@ -4,12 +4,12 @@
   The RecordsCtrl pulls data from the Records service (service.js)
   The Records service returns an array of record data
 -->
-<ion-view title="{{strDate}}">
+<ion-view title="{{strDate}}" cache-view="false">
     <ion-content>
         <ion-list>
-            <ion-item ng-repeat="klog in kickLog" type="item-text-wrap" href="#" ng-class="'my-item-'+currentSelectedTheme">
+            <ion-item ng-repeat="klog in kickLog" type="item-text-wrap" ng-class="'my-item-'+currentSelectedTheme">
                 <span class="badge badge-{{currentSelectedTheme}}" style="left:30px;right:auto;">{{klog.kick}}</span>
-                <span style="float:right;">{{klog.time}}</span>
+                <span style="float:right;padding-right:20px;">{{klog.time}}</span>
             </ion-item>
         </ion-list>
     </ion-content>

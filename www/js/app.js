@@ -7,7 +7,7 @@
 // 'starter.controllers' is found in controllers.js
 angular.module('sweetkicks', ['ionic', 'sweetkicks.controllers'])
 
-    .run(function ($ionicPlatform, $rootScope, Settings) {
+    .run(function ($ionicPlatform, $rootScope, Account) {
         $ionicPlatform.ready(function () {
             // Hide the accessory bar by default (remove this to show the accessory bar above the keyboard
             // for form inputs)
@@ -49,7 +49,12 @@ angular.module('sweetkicks', ['ionic', 'sweetkicks.controllers'])
             }
         });
 
-        $rootScope.currentSelectedTheme = Settings.getCurrentGlobalTheme();
+        $ionicPlatform.registerBackButtonAction(function (event) {
+            event.preventDefault();
+            ionic.Platform.exitApp();
+        }, 100);
+
+        $rootScope.currentSelectedTheme = Account.getCurrentGlobalTheme();
         $rootScope.$watch('currentSelectedTheme', function(newVal, oldVal) {
         // Add this code for updating bar theme. It requires to refactor once ion-nav-bar does work properly with ng-class in next version.
             var oldBarTheme = 'bar-' + oldVal;
@@ -73,12 +78,26 @@ angular.module('sweetkicks', ['ionic', 'sweetkicks.controllers'])
     })
 
     .config(function ($stateProvider, $urlRouterProvider) {
+        // Parse initialising
+        Parse.initialize("DUhmhs2DlPOk73TF5yZag44kdI9EyaqWgFE8lFJS", "3HniVtTcGXrFMayo9N2HxUGStjV1GPUrcJYK43Zu");
 
         // Ionic uses AngularUI Router which uses the concept of states
         // Learn more here: https://github.com/angular-ui/ui-router
         // Set up the various states which the app can be in.
         // Each state's controller can be found in controllers.js
         $stateProvider
+
+            .state('signin', {
+                url: '/signin',
+                templateUrl: 'templates/signin.html',
+                controller: 'SignInCtrl'
+            })
+
+            .state('signup', {
+                url: '/signup',
+                templateUrl: 'templates/signup.html',
+                controller: 'SignUpCtrl'
+            })
 
             // setup an abstract state for the tabs directive
             .state('tab', {
@@ -118,16 +137,24 @@ angular.module('sweetkicks', ['ionic', 'sweetkicks.controllers'])
                 }
             })
 
-            .state('tab.settings', {
-                url: '/settings',
+            .state('tab.account', {
+                url: '/account',
                 views: {
-                    'tab-settings': {
-                        templateUrl: 'templates/tab-settings.html',
-                        controller: 'SettingsCtrl'
+                    'tab-account': {
+                        templateUrl: 'templates/tab-account.html',
+                        controller: 'AccountCtrl'
                     }
                 }
             });
 
-        // if none of the above states are matched, use this as the fallback
-        $urlRouterProvider.otherwise('/tab/home');
+
+        $urlRouterProvider.otherwise(function($injector, $location) {
+            var state = $injector.get('$state');
+            var currentUser = Parse.User.current();
+            if (currentUser) {
+                state.go('tab.home');
+            } else {
+                state.go('signin');
+            }
+        });
     });

@@ -131,7 +131,7 @@ angular.module('sweetkicks.services', [])
         };
     })
 
-    .factory('Settings', function (LocalStorage) {
+    .factory('Account', function (LocalStorage) {
         var K_CURRENT_GLOBAL_THEME = 'current_global_theme';
         var KEY_DUE_DATE = 'dueDate';
         var KEY_BABY_NAME = 'babyName';

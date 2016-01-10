@@ -1,0 +1,23 @@
+<ion-view title="Sign Up" cache-view="false" can-swipe-back="false">
+    <ion-content class="has-header padding">
+        <p>&nbsp;</p>
+        <h2 class="text-center {{currentSelectedTheme}}">Welcome</h2>
+        <div class="list list-inset">
+            <label class="item item-input">
+                <i class="icon ion-email placeholder-icon {{currentSelectedTheme}}"></i>
+                <input type="email" placeholder="Please enter email" ng-model="data.user.email.text" required>
+            </label>
+        </div>
+        <div>
+            <p ng-show="data.user.email.invalid" style="color: red;">* Please enter a valid email address </p>
+        </div>
+        <div>
+            <button class="button button-block button-{{currentSelectedTheme}}" ng-disabled="!data.user.email.text" ng-click="validateUser()">
+                Start sweet kicks
+            </button>
+        </div>
+        <div class="text-center">
+            <p class="{{currentSelectedTheme}}">Already have an account? <a href="#/signin">Sign In</a>.</p>
+        </div>
+    </ion-content>
+</ion-view>
