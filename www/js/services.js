@@ -48,6 +48,97 @@ angular.module('sweetkicks.services', [])
         var dateRegex = /(\d{4})-(\d{1,2})-(\d{1,2})/;  // 2014-09-21 or 2014-9-1
 
         return {
+            getFetalMoveTimesBySweetKickId: function(id) {
+                for (var i = 0; i < records.length; i++) {
+                    var e = records[i];
+                    if (e.id === id) {
+                        return e.get('fetalMovedAt').map(function(date) {
+                            return date.toLocaleTimeString();
+                        });
+                    }
+                }
+                return [];
+            },
+            findByDays: function() {
+                if (records.length === 0) {
+                    return this.findFromCloud(true).then(function(results) {
+                        return results;
+                    });
+                } else {
+                    return Parse.Promise.as(records);
+                }
+            },
+            findToday: function() {
+                if (records.length === 0) {
+                    return this.findFromCloud(true).then(function(results) {
+                        return results[0].createdAt.toDateString() === new Date().toDateString() ? results[0] : null;
+                    });
+                } else {
+                    return Parse.Promise.as(records[0].createdAt.toDateString() === new Date().toDateString() ? records[0] : null);
+                }
+            },
+            findFromCloud: function(fetchRemote) {
+                if (!fetchRemote) {
+                    return records;
+                }
+
+                var SweetKick = Parse.Object.extend('SweetKick');
+                var query = new Parse.Query(SweetKick);
+                query.equalTo('user', Parse.User.current());
+
+                return query.find().then(
+                    function(results) {
+                        //console.log('Successfully found objects from cloud. Results =>', results);
+                        records = results;
+                        return records;
+                    },
+                    function(error) {
+                        console.log('Error occurred whild find objects from cloud. Error =>', error);
+                    }
+                );
+            },
+            saveToCloud: function() {
+                var SweetKick = Parse.Object.extend('SweetKick');
+                var query = new Parse.Query(SweetKick);
+                var today = new Date();
+
+                var from = new Date();
+                from.setHours(0, 0, 0, 0);
+                var to = new Date(from);
+                to.setDate(to.getDate() + 1);
+
+                query.greaterThanOrEqualTo('fetalMovedAt', from);
+                query.lessThan('fetalMovedAt', to);
+
+                return query.first().then(
+                    function(existingSK) {
+                        if (existingSK) {
+                            // update
+                            existingSK.set('fetalMoveTimes', existingSK.get('fetalMoveTimes') + 1);
+                            existingSK.get('fetalMovedAt').push(today);
+                            if (today.getTime() - existingSK.get('countedAt') >= FIVE_MINUTES) {
+                                existingSK.set('validCount', existingSK.get('validCount') + 1);
+                                existingSK.set('countedAt', today.getTime());
+                            }
+                            return existingSK.save();
+                        } else {
+                            // create
+                            var sk = new SweetKick();
+                            var u = Parse.User.current();
+                            sk.set('fetalMoveTimes', 1);
+                            sk.set('validCount', 1);
+                            sk.set('countedAt', today.getTime());
+                            sk.set('fetalMovedAt', [today]);
+                            sk.set('user', u);
+                            sk.setACL(new Parse.ACL(u));
+                            return sk.save();
+                        }
+                    },
+                    function(error) {
+                        console.log('Error occurred while saving SweetKick. Error: ' + error.code + " " + error.message);
+                    }
+                );
+            },
             all: function () {
                 //records.length = 0;
                 console.log('records.length', records.length);
@@ -60,18 +151,6 @@ angular.module('sweetkicks.services', [])
                         records = validKicks.kicks;
                     }
                 }
-
-
-//                for(var i= 0, len = LocalStorage.size(); i < len; i++) {
-//                    var key = localStorage.key(i);
-//                    if (key.match(dateRegex)) {
-//
-//                        records.push(LocalStorage.getObject(key))
-//                    }
-//                }
-//                records.sort(function(a, b) {
-//                    return b.updatedAt - a.updatedAt;
-//                });
                 return records;
             },
             /**

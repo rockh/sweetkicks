@@ -4,9 +4,9 @@
     <!--</ion-nav-buttons>-->
     <ion-content class="has-header">
         <ion-list>
-            <ion-item ng-repeat="record in records" type="item-text-wrap" href="#/tab/record/{{record.id}}" ng-class="'my-item-'+currentSelectedTheme">
-                {{record.id}} &nbsp;
-                <span class="badge badge-{{currentSelectedTheme}}">{{record.kickCount}} / {{record.actualKicks}}</span>
+            <ion-item ng-repeat="record in records" type="item-text-wrap" ng-init="strDate=record.createdAt.toDateString()" href="#/tab/record/{{record.id}}/{{strDate}}" ng-class="'my-item-'+currentSelectedTheme">
+                {{strDate}} &nbsp;
+                <span class="badge badge-{{currentSelectedTheme}}">{{record.get('validCount')}} / {{record.get('fetalMoveTimes')}}</span>
             </ion-item>
         </ion-list>
 

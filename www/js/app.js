@@ -128,7 +128,7 @@ angular.module('sweetkicks', ['ionic', 'sweetkicks.controllers'])
                 }
             })
             .state('tab.record-detail', {
-                url: '/record/:recordId',
+                url: '/record/:recordId/:strDate',
                 views: {
                     'tab-records': {
                         templateUrl: 'templates/record-detail.html',
