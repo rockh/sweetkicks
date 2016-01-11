@@ -71,7 +71,7 @@ angular.module('sweetkicks.services', [])
             findToday: function() {
                 if (records.length === 0) {
                     return this.findFromCloud(true).then(function(results) {
-                        return results[0].createdAt.toDateString() === new Date().toDateString() ? results[0] : null;
+                        return results.length > 0 && results[0].createdAt.toDateString() === new Date().toDateString() ? results[0] : null;
                     });
                 } else {
                     return Parse.Promise.as(records[0].createdAt.toDateString() === new Date().toDateString() ? records[0] : null);

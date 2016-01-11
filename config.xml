@@ -32,4 +32,6 @@
     </platform>
     <icon src="resources/android/icon/drawable-xhdpi-icon.png" />
     <plugin name="cordova-plugin-datepicker" spec="~0.9.3" />
+    <plugin name="cordova-plugin-admobpro" spec="~2.10.0" />
+    <plugin name="cordova-plugin-dialogs" spec="~1.2.0" />
 </widget>

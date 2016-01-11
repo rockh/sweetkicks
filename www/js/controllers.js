@@ -87,7 +87,7 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services', 'ngCordova'])
         }
     })
 
-    .controller('HomeCtrl', function ($scope, $state, $timeout, $rootScope, $ionicPopup, Records, Account, DateUtil) {
+    .controller('HomeCtrl', function ($scope, $state, $timeout, $rootScope, $ionicPopup, $cordovaDialogs, Records, Account, DateUtil) {
         var currentUser;
         $scope.$on('$ionicView.beforeEnter', function() {
             currentUser = Parse.User.current();
@@ -105,50 +105,35 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services', 'ngCordova'])
 
         // retrieve today's SweetKicks
         Records.findToday().then(function(result) {
+            $scope.dataReady = false;
             $timeout(function() {
                 if (result) {
                     $scope.data.fetalMoveTimes = result.get('fetalMoveTimes');
                     $scope.data.validCount = result.get('validCount');
                 }
+                $scope.dataReady = true;
             }, 1);
         });
 
+        // on click "KICK +1" button
         $scope.countKicks = function() {
-//            var aKick = Records.get($scope.today) || {};
-//            aKick.id = $scope.today;
-//            aKick.actualKicks = $scope.actualKicks+1;
-//            aKick.kickCount = $scope.kickCount;
-            //Records.save(aKick);
-
-            var date = new Date();
-            var data = {
-                localTimestamp: date.getTime(),
-                localDate: date.toLocaleDateString(),
-                localTime: date.toLocaleTimeString(),
-                fetalMovement: $scope.data.fetalMovement,
-                validCount: $scope.data.validCount,
-                user: currentUser.id
-            };
-            //console.log(data);
-//            Parse.Cloud.run('saveSweetKick', data).then(
-//                function(res) {
-//                    console.log(res);
-//                },
-//                function(err) {
-//                    console.log(err);
-//                }
-//            );
-
+            $scope.dataReady = false;
             Records.saveToCloud().then(function(result) {
                 $timeout(function() {
                     $scope.data.fetalMoveTimes = result.get('fetalMoveTimes');
                     $scope.data.validCount = result.get('validCount');
+                    $scope.dataReady = true;
+                    if ($scope.data.validCount > 0 && $scope.data.validCount % 10 === 0 ) {
+                        $cordovaDialogs
+                        .alert('Hey, the little one\'s kicking reaches ' + $scope.data.validCount + ' times!', 'Remind', 'OK')
+                        .then(function() {
+                            if(AdMob) {
+                                AdMob.showInterstitial();
+                            }
+                        });
+                    }
                 }, 1);
             });
-
-            //Records.save({'kickCount':$scope.kickCount+1, 'actualKicks':$scope.actualKicks+1});
-//            $scope.kickCount = aKick.kickCount;
-//            $scope.actualKicks = aKick.actualKicks;
         };
 
     })
@@ -158,21 +143,6 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services', 'ngCordova'])
             console.log(results);
             $scope.records = results;
         });
-
-//        $scope.refresh = function() {
-//            $http.get('https://blazing-fire-4804.firebaseio.com/sweetkicks/records.json').then(function(resp) {
-//                console.log('Success', resp);
-//                var d = resp.data;
-//                for (var k in d) {
-//                    Records.directSave(d[k]);
-//                }
-//                $scope.records = Records.all();
-//                // For JSON responses, resp.data contains the result
-//            }, function(err) {
-//                console.error('ERR', err);
-//                // err.status will contain the status code
-//            })
-//        };
     })
 
     .controller('RecordDetailCtrl', function ($scope, $stateParams, Records) {

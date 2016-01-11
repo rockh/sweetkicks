@@ -21,7 +21,9 @@
     "cordova-plugin-splashscreen",
     "cordova-plugin-statusbar",
     "ionic-plugin-keyboard",
-    "cordova-plugin-datepicker"
+    "cordova-plugin-datepicker",
+    "cordova-plugin-admobpro",
+    "cordova-plugin-dialogs"
   ],
   "cordovaPlatforms": [
     "android"
