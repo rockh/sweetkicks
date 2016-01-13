@@ -85,6 +85,7 @@ angular.module('sweetkicks.services', [])
                 var SweetKick = Parse.Object.extend('SweetKick');
                 var query = new Parse.Query(SweetKick);
                 query.equalTo('user', Parse.User.current());
+                query.descending('createdAt');
 
                 return query.find().then(
                     function(results) {
@@ -115,7 +116,8 @@ angular.module('sweetkicks.services', [])
                         if (existingSK) {
                             // update
                             existingSK.set('fetalMoveTimes', existingSK.get('fetalMoveTimes') + 1);
-                            existingSK.get('fetalMovedAt').push(today);
+                            //existingSK.get('fetalMovedAt').push(today);
+                            existingSK.addUnique('fetalMovedAt', today);
                             if (today.getTime() - existingSK.get('countedAt') >= FIVE_MINUTES) {
                                 existingSK.set('validCount', existingSK.get('validCount') + 1);
                                 existingSK.set('countedAt', today.getTime());
@@ -214,32 +216,68 @@ angular.module('sweetkicks.services', [])
         var K_CURRENT_GLOBAL_THEME = 'current_global_theme';
         var KEY_DUE_DATE = 'dueDate';
         var KEY_BABY_NAME = 'babyName';
-        //var themes = [{ label: 'Baby Blue', value: 'calm' }, { label: 'Baby Pink', value: 'assertive' }];
         var themes = { 'calm': 'Baby Blue', 'assertive': 'Baby Pink' };
         var self = {};
+        //var settings = Parse.User.current().get('settings') || { 'dueDate': new Date(), 'babyName': '', 'selectedTheme': 'calm' };
+        var options = { 'dueDate': undefined, 'babyName': undefined, 'selectedTheme': 'calm' };
+        var needToSave = false;
+        var currentUser = Parse.User.current();
 
-        self.getCurrentGlobalTheme = function () {
-            return LocalStorage.get(K_CURRENT_GLOBAL_THEME, 'calm');
+        self.getOptions = function() {
+            if (currentUser) {
+                options = currentUser.get('options') || { 'dueDate': undefined, 'babyName': undefined, 'selectedTheme': 'calm' };
+            }
+            return options;
         };
 
-        self.setCurrentGlobalTheme = function (theme) {
-            LocalStorage.set(K_CURRENT_GLOBAL_THEME, theme);
+        self.setOptions = function() {
+            if (!currentUser) return;
+
+            currentUser.set('options', options);
+            if (needToSave) {
+                currentUser.save().then(function(u) {
+                    console.log('>>>> save to cloud', JSON.stringify(u));
+                    needToSave = false;
+                });
+            }
         };
 
-        self.daysLeft = function () {
-            var dueDate = LocalStorage.getInt(KEY_DUE_DATE);
-            if (isNaN(dueDate)) {
+        self.getOption = function(k) {
+            return self.getOptions[k];
+        };
+
+        self.setOption = function(k, v) {
+            options[k] = v;
+            needToSave = true;
+        };
+
+        self.getBtnKickHTML = function() {
+            //return btnKickHTML;
+            var bbName;
+            if (!options) {
+                bbName = self.getOptions().bbName;
+            }
+            return !bbName ? 'KICK +1' : bbName + '<br/>KICK +1';
+        };
+
+        self.getDaysToDueDate = function() {
+            var dueDate = self.getOptions().dueDate;
+            if (!dueDate || isNaN(dueDate.getTime())) {
                 return undefined;
             }
 
-            var n = new Date().getTime();
-            var days = Math.round((dueDate - n) / (1000 * 60 * 60 * 24));
+            var days = Math.round((dueDate.getTime() - Date.now()) / (1000 * 60 * 60 * 24));
             return days >= 0 ? days + ' days left' : 'DUE';
         };
 
-        self.getHtmlOnKickButton = function () {
-            var name = LocalStorage.get(KEY_BABY_NAME);
-            return !name || name === 'undefined' ? 'KICK +1' : name + '<br/>KICK +1';
+        self.getCurrentGlobalTheme = function () {
+            return self.getOptions().selectedTheme;
+        };
+
+        //==
+
+        self.setCurrentGlobalTheme = function (theme) {
+            LocalStorage.set(K_CURRENT_GLOBAL_THEME, theme);
         };
 
         self.saveBabyName = function (name) {

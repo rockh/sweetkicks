@@ -87,7 +87,7 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services', 'ngCordova'])
         }
     })
 
-    .controller('HomeCtrl', function ($scope, $state, $timeout, $rootScope, $ionicPopup, $cordovaDialogs, Records, Account, DateUtil) {
+    .controller('HomeCtrl', function ($scope, $state, $timeout, $rootScope, $ionicPopup, $cordovaDialogs, Records, Account) {
         var currentUser;
         $scope.$on('$ionicView.beforeEnter', function() {
             currentUser = Parse.User.current();
@@ -98,10 +98,10 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services', 'ngCordova'])
         });
 
         $scope.data = { fetalMoveTimes: 0, validCount: 0 };
-        $scope.btnKickHtml = Account.getHtmlOnKickButton();
+        $scope.btnKickHtml = !Account.getOptions().babyName ? 'KICK +1' : Account.getOptions().babyName + '<br/>KICK +1';
         $scope.btnKickStyle = $scope.btnKickHtml.length == 7 ? 'single-line-on-round-buton' : 'with-baby-name-on-round-button';
         $scope.today = new Date().toLocaleDateString();
-        $scope.daysLeft = Account.daysLeft();
+        $scope.daysToDueDate = Account.getDaysToDueDate();
 
         // retrieve today's SweetKicks
         Records.findToday().then(function(result) {
@@ -151,45 +151,38 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services', 'ngCordova'])
         console.log('action times', $scope.actionTimes);
     })
 
-    .controller('AccountCtrl', function ($rootScope, $scope, $window, $cordovaDatePicker, Account, LocalStorage) {
-        var INPUT_DUE_DATE = 'dueDate';
-        var mySavedDate = LocalStorage.getInt(INPUT_DUE_DATE);
-        var dateField = document.querySelector('#dueDate');
-        var myDate = new Date();
-
-        $scope.data = {};
-
-        if (!isNaN(mySavedDate)) {
-            myDate = new Date(mySavedDate);
-            dateField.value = myDate.toLocaleDateString();
-        }
+    .controller('AccountCtrl', function ($rootScope, $state, $scope, $window, $cordovaDatePicker, Account) {
+        $scope.settings = Account.getOptions();
 
         $scope.pickDate = function() {
-            var options = {date: myDate, mode: 'date'};
-            $cordovaDatePicker.show(options).then(function(date){
-                var t = date.getTime();
-                if (!isNaN(t)) {
-                    LocalStorage.set(INPUT_DUE_DATE, t);
-                    dateField.value = date.toLocaleDateString();
-                    myDate = date;
-                }
+            var options = {date: $scope.settings.dueDate || new Date(), mode: 'date'};
+            $cordovaDatePicker.show(options).then(function(selectedDate){
+                $scope.settings.dueDate = selectedDate;
             });
         };
 
-        $scope.babyName = Account.getBabyName();
-        $scope.saveBabyName = function() {
-            var name = document.querySelector('#babyName').value;
-            if ( name!== $scope.babyName) {
-                Account.saveBabyName(name);
-            }
+        $scope.appThemes = { 'calm': 'Baby Blue', 'assertive': 'Baby Pink' };
+        $scope.changeTheme = function() {
+            $rootScope.currentSelectedTheme = $scope.settings.selectedTheme;
         };
 
-        $scope.data.themes = Account.getThemes();
-        $scope.data.selectedTheme = Account.getCurrentGlobalTheme();
-        $scope.changeTheme = function() {
-            Account.setCurrentGlobalTheme($scope.data.selectedTheme);
-            $rootScope.currentSelectedTheme = Account.getCurrentGlobalTheme();
-        };
+        $scope.$watchGroup(['settings.dueDate', 'settings.babyName', 'settings.selectedTheme'], function(newVal, oldVal) {
+            console.log('new', newVal[0], 'old', oldVal[0]);
+            if (newVal[0] && (!oldVal[0] || (oldVal[0] && newVal[0].toDateString() !== oldVal[0].toDateString()))) {
+                Account.setOption('dueDate', newVal[0]);
+            }
+            if (newVal[1] !== oldVal[1]) {
+                Account.setOption('babyName', newVal[1]);
+            }
+            if (newVal[2] !== oldVal[2]) {
+                Account.setOption('selectedTheme', newVal[2]);
+            }
+        });
+
+        $scope.$on('$ionicView.beforeLeave', function() {
+            console.log('$ionicView.beforeLeave');
+            Account.setOptions();
+        });
     });
 
 

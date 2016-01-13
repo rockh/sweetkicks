@@ -5,7 +5,7 @@
 // the 2nd parameter is an array of 'requires'
 // 'starter.services' is found in services.js
 // 'starter.controllers' is found in controllers.js
-angular.module('sweetkicks', ['ionic', 'sweetkicks.controllers'])
+angular.module('sweetkicks', ['ionic', 'sweetkicks.controllers', 'sweetkicks.services'])
 
     .run(function ($ionicPlatform, $rootScope, Account) {
         $ionicPlatform.ready(function () {
@@ -22,31 +22,31 @@ angular.module('sweetkicks', ['ionic', 'sweetkicks.controllers'])
             }
 
             // AdMob
-            if (window.plugins && window.plugins.AdMob) {
-                var admob_key = device.platform == "Android" ? "ca-app-pub-9997665567497408/4295329945" : "IOS_PUBLISHER_KEY";
-                var admob = window.plugins.AdMob;
-                admob.createBannerView(
-                    {
-                        'publisherId': admob_key,
-                        'adSize': admob.AD_SIZE.BANNER,
-                        'bannerAtTop': false
-                    },
-                    function () {
-                        admob.requestAd(
-                            { 'isTesting': false },
-                            function () {
-                                admob.showAd(true);
-                            },
-                            function () {
-                                console.log('failed to request ad');
-                            }
-                        );
-                    },
-                    function () {
-                        console.log('failed to create banner view');
-                    }
-                );
-            }
+//            if (window.plugins && window.plugins.AdMob) {
+//                var admob_key = device.platform == "Android" ? "ca-app-pub-9997665567497408/4295329945" : "IOS_PUBLISHER_KEY";
+//                var admob = window.plugins.AdMob;
+//                admob.createBannerView(
+//                    {
+//                        'publisherId': admob_key,
+//                        'adSize': admob.AD_SIZE.BANNER,
+//                        'bannerAtTop': false
+//                    },
+//                    function () {
+//                        admob.requestAd(
+//                            { 'isTesting': false },
+//                            function () {
+//                                admob.showAd(true);
+//                            },
+//                            function () {
+//                                console.log('failed to request ad');
+//                            }
+//                        );
+//                    },
+//                    function () {
+//                        console.log('failed to create banner view');
+//                    }
+//                );
+//            }
         });
 
         $ionicPlatform.registerBackButtonAction(function (event) {
