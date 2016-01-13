@@ -52,9 +52,7 @@ angular.module('sweetkicks.services', [])
                 for (var i = 0; i < records.length; i++) {
                     var e = records[i];
                     if (e.id === id) {
-                        return e.get('fetalMovedAt').map(function(date) {
-                            return date.toLocaleTimeString();
-                        });
+                        return e.get('fetalMovedAt');
                     }
                 }
                 return [];
@@ -116,7 +114,6 @@ angular.module('sweetkicks.services', [])
                         if (existingSK) {
                             // update
                             existingSK.set('fetalMoveTimes', existingSK.get('fetalMoveTimes') + 1);
-                            //existingSK.get('fetalMovedAt').push(today);
                             existingSK.addUnique('fetalMovedAt', today);
                             if (today.getTime() - existingSK.get('countedAt') >= FIVE_MINUTES) {
                                 existingSK.set('validCount', existingSK.get('validCount') + 1);
