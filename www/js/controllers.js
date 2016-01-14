@@ -1,124 +1,192 @@
-angular.module('sweetkicks.controllers', ['sweetkicks.services'])
+angular.module('sweetkicks.controllers', ['sweetkicks.services', 'ngCordova'])
 
-    .controller('HomeCtrl', function ($scope, $timeout, Records, Settings, DateUtil) {
-        var m = 59, s = 60;
-        var promise;
-        var pre0 = function(x) {
-            return x < 10 ? '0' + x : x;
+    .controller('SignInCtrl', function ($scope, $rootScope, $state, $ionicPopup, $ionicHistory) {
+        $ionicHistory.clearCache();
+        $ionicHistory.clearHistory();
+        $ionicHistory.nextViewOptions({
+            disableAnimate: true,
+            disableBack: true
+        });
+
+        $scope.data = { user: { email: {} } };
+        $scope.validateUser = function() {
+            if (!validateEmail($scope.data.user.email.text)) {
+                $scope.data.user.email.text = undefined;
+                $scope.data.user.email.invalid = true;
+                return false;
+            }
+
+            delete $scope.data.user.email.invalid;
+            console.log('yes, valid email =>', $scope.data.user.email);
+
+            signInUser();
         };
 
-        $scope.btnKickHtml = Settings.getHtmlOnKickButton();
+        function signInUser() {
+            var emailText = $scope.data.user.email.text;
+            Parse.User.logIn(emailText, emailText, {
+                success: function(user) {
+                    console.log('Parse user =>', user);
+                    $state.go('tab.home');
+                },
+                error: function(user, error) {
+                    console.log("Error: " + error.code + " " + error.message);
+                    $ionicPopup.alert({
+                        title: 'Failed',
+                        okType: 'button-' + $rootScope.currentSelectedTheme,
+                        template: '<p class="text-center">' + (error.code === 101 ? 'Invalid account' : error.message) + '</p>'
+                    });
+                }
+            });
+        }
+    })
+
+    .controller('SignUpCtrl', function ($scope, $rootScope, $state, $ionicPopup, $ionicHistory) {
+        $ionicHistory.clearCache();
+        $ionicHistory.clearHistory();
+        $ionicHistory.nextViewOptions({
+            disableAnimate: true,
+            disableBack: true
+        });
+
+        $scope.data = { user: { email: {} } };
+        $scope.validateUser = function() {
+            if (!validateEmail($scope.data.user.email.text)) {
+                $scope.data.user.email.text = undefined;
+                $scope.data.user.email.invalid = true;
+                return false;
+            }
+
+            delete $scope.data.user.email.invalid;
+            console.log('yes, valid email =>', $scope.data.user.email);
+
+            createUser();
+        };
+
+        function createUser() {
+            var emailText = $scope.data.user.email.text;
+            var user = new Parse.User();
+            user.set("email", emailText);
+            user.set("username", emailText);
+            user.set("password", emailText);
+            user.signUp(null, {
+                success: function (user) {
+                    console.log('Parse user =>', user);
+                    $state.go('tab.home');
+                },
+                error: function (user, error) {
+                    // Show the error message somewhere and let the user try again.
+                    console.log("Error: " + error.code + " " + error.message);
+                    $ionicPopup.alert({
+                        title: 'Failed',
+                        okType: 'button-' + $rootScope.currentSelectedTheme,
+                        template: '<p class="text-center">' + error.message + '</p>'
+                    });
+                }
+            });
+        }
+    })
+
+    .controller('HomeCtrl', function ($scope, $state, $timeout, $rootScope, $ionicPopup, $cordovaDialogs, Records, Account) {
+        var currentUser;
+        $scope.$on('$ionicView.beforeEnter', function() {
+            currentUser = Parse.User.current();
+            //console.log(currentUser);
+            if (!currentUser) {
+                return $state.go('signin');
+            }
+        });
+
+        $scope.data = { fetalMoveTimes: 0, validCount: 0 };
+        $scope.btnKickHtml = !Account.getOptions().babyName ? 'KICK +1' : Account.getOptions().babyName + '<br/>KICK +1';
         $scope.btnKickStyle = $scope.btnKickHtml.length == 7 ? 'single-line-on-round-buton' : 'with-baby-name-on-round-button';
-        $scope.today = DateUtil.today();
-        $scope.daysLeft = Settings.daysLeft();
-        $scope.record = Records.get($scope.today);
+        $scope.today = new Date().toLocaleDateString();
+        $scope.daysToDueDate = Account.getDaysToDueDate();
 
-        $scope.kickCount = !$scope.record.hasOwnProperty('id') ? 0 : $scope.record.kickCount;
-        $scope.actualKicks = !$scope.record.hasOwnProperty('id') ? 0 : $scope.record.actualKicks;
-//        $scope.oneHourCount = "01:00:00";
-//        $scope.startTimer = false;
-//        $scope.startSession = function () {
-//            $scope.startTimer = true;
-//
-//            if (59 == m && 60 == s) {
-//                s--;
-//                promise = $timeout($scope.startSession, 1000);
-//            } else if (0 == m && 0 == s) {
-//                $scope.oneHourCount = '00:00:00';
-//                $scope.stop();
-//                alert('1 hour kicks count done!');
-//            } else {
-//                if (s > 0) {
-//                    $scope.oneHourCount = '00:' + pre0(m) + ':' + pre0(s);
-//                    s--;
-//                } else if (s == 0) {
-//                    $scope.oneHourCount = '00:' + pre0(m) + ':' + pre0(s);
-//                    m--; s = 59;
-//                }
-//                promise = $timeout($scope.startSession, 1000);
-//            }
-//        };
+        // retrieve today's SweetKicks
+        Records.findToday().then(function(result) {
+            $scope.dataReady = false;
+            $timeout(function() {
+                if (result) {
+                    $scope.data.fetalMoveTimes = result.get('fetalMoveTimes');
+                    $scope.data.validCount = result.get('validCount');
+                }
+                $scope.dataReady = true;
+            }, 1);
+        });
 
-//        $scope.stop = function () {
-//            $timeout.cancel(promise);
-//        };
-
+        // on click "KICK +1" button
         $scope.countKicks = function() {
-            var aKick = Records.get($scope.today) || {};
-            aKick.id = $scope.today;
-            aKick.actualKicks = $scope.actualKicks+1;
-            aKick.kickCount = $scope.kickCount;
-            Records.save(aKick);
-
-            //Records.save({'kickCount':$scope.kickCount+1, 'actualKicks':$scope.actualKicks+1});
-            $scope.kickCount = aKick.kickCount;
-            $scope.actualKicks = aKick.actualKicks;
-
-//            $scope.record = Records.get
+            $scope.dataReady = false;
+            Records.saveToCloud().then(function(result) {
+                $timeout(function() {
+                    $scope.data.fetalMoveTimes = result.get('fetalMoveTimes');
+                    $scope.data.validCount = result.get('validCount');
+                    $scope.dataReady = true;
+                    if ($scope.data.validCount > 0 && $scope.data.validCount % 10 === 0 ) {
+                        $cordovaDialogs
+                        .alert('Hey, the little one\'s kicking reaches ' + $scope.data.validCount + ' times!', 'Remind', 'OK')
+                        .then(function() {
+                            if(AdMob) {
+                                AdMob.showInterstitial();
+                            }
+                        });
+                    }
+                }, 1);
+            });
         };
 
     })
 
     .controller('RecordsCtrl', function ($scope, Records, $http) {
-        $scope.records = Records.all();
-
-//        $scope.refresh = function() {
-//            $http.get('https://blazing-fire-4804.firebaseio.com/sweetkicks/records.json').then(function(resp) {
-//                console.log('Success', resp);
-//                var d = resp.data;
-//                for (var k in d) {
-//                    Records.directSave(d[k]);
-//                }
-//                $scope.records = Records.all();
-//                // For JSON responses, resp.data contains the result
-//            }, function(err) {
-//                console.error('ERR', err);
-//                // err.status will contain the status code
-//            })
-//        };
+        Records.findByDays().then(function(results) {
+            console.log(results);
+            $scope.records = results;
+        });
     })
 
-    .controller('FriendDetailCtrl', function ($scope, $stateParams, Records) {
-        $scope.record = Records.get($stateParams.recordId);
-        $scope.lastKickTime = new Date($scope.record.updatedAt).toLocaleString();
+    .controller('RecordDetailCtrl', function ($scope, $stateParams, Records) {
+        $scope.strDate = $stateParams.strDate;
+        $scope.actionTimes = Records.getFetalMoveTimesBySweetKickId($stateParams.recordId);
+        console.log('action times', $scope.actionTimes);
     })
 
-    .controller('SettingsCtrl', function ($rootScope, $scope, $window, Settings, LocalStorage) {
-        var INPUT_DUE_DATE = 'dueDate';
-        var mySavedDate = LocalStorage.getInt(INPUT_DUE_DATE);
-        var dateField = document.querySelector('#dueDate');
-
-
-        var myDate = new Date();
-
-        if (!isNaN(mySavedDate)) {
-            myDate = new Date(mySavedDate);
-            dateField.value = myDate.toLocaleDateString();
-        }
+    .controller('AccountCtrl', function ($rootScope, $state, $scope, $window, $cordovaDatePicker, Account) {
+        $scope.settings = Account.getOptions();
 
         $scope.pickDate = function() {
-            $window.plugins.datePicker.show({date: myDate, mode: 'date'}, function(date){
-                var t = date.getTime();
-                if (!isNaN(t)) {
-                    LocalStorage.set(INPUT_DUE_DATE, t);
-                    dateField.value = date.toLocaleDateString()
-                    myDate = date;
-                }
+            var options = {date: $scope.settings.dueDate || new Date(), mode: 'date'};
+            $cordovaDatePicker.show(options).then(function(selectedDate){
+                $scope.settings.dueDate = selectedDate;
             });
         };
 
-        $scope.babyName = Settings.getBabyName();
-        $scope.saveBabyName = function() {
-            var name = document.querySelector('#babyName').value;
-            if ( name!== $scope.babyName) {
-                Settings.saveBabyName(name);
-            }
+        $scope.appThemes = { 'calm': 'Baby Blue', 'assertive': 'Baby Pink' };
+        $scope.changeTheme = function() {
+            $rootScope.currentSelectedTheme = $scope.settings.selectedTheme;
         };
 
-        $scope.themes = Settings.getThemes();
-        $scope.myTheme = $scope.themes[Settings.getThemeId()];
-        $scope.onThemeChange = function() {
-            Settings.setThemeId(document.querySelector('#myTheme').value);
-            Settings.provision($rootScope);
-        };
+        $scope.$watchGroup(['settings.dueDate', 'settings.babyName', 'settings.selectedTheme'], function(newVal, oldVal) {
+            console.log('new', newVal[0], 'old', oldVal[0]);
+            if (newVal[0] && (!oldVal[0] || (oldVal[0] && newVal[0].toDateString() !== oldVal[0].toDateString()))) {
+                Account.setOption('dueDate', newVal[0]);
+            }
+            if (newVal[1] !== oldVal[1]) {
+                Account.setOption('babyName', newVal[1]);
+            }
+            if (newVal[2] !== oldVal[2]) {
+                Account.setOption('selectedTheme', newVal[2]);
+            }
+        });
+
+        $scope.$on('$ionicView.beforeLeave', function() {
+            console.log('$ionicView.beforeLeave');
+            Account.setOptions();
+        });
     });
+
+
+function validateEmail(email) {
+    var re = /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
+    return re.test(email);
+}

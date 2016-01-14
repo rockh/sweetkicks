@@ -1,23 +1,27 @@
-<ion-view title="SweetKicks Counter">
-  <ion-content class="has-header padding">
+<ion-view view-title="SweetKicks" cache-view="false">
 
-    <!--<div class="row" style="height:100px;line-height:100px;">-->
-        <!--<div class="col text-center" style="font-size:26px;color:#43cee6;" ng-show="startTimer">{{oneHourCount}}</div>-->
-    <!--</div>-->
-
-  <div class="row {{myTheme}}" style="font-size:22px;">
-      <div class="col col-50">{{today}}</div>
-      <div class="col col-50 text-right">{{daysLeft}}</div>
-  </div>
-
-  <div class="row row-bottom" style="height:100px; line-height:100px;">
-      <div class="col text-center {{myTheme}}" style="font-size:40px;" >{{kickCount}}/{{actualKicks}}</div>
-  </div>
-
-    <div class="row" data-tap-disabled="true">
-        <a class="button button-outline button-{{myTheme}} round-button {{btnKickStyle}}" ng-click="countKicks()" ng-bind-html="btnKickHtml">KICK +1</a>
+    <div class="loader-center" ng-show="!dataReady">
+        <ion-spinner icon="spiral"></ion-spinner>
     </div>
 
+    <ion-content class="padding">
 
-  </ion-content>
+        <!--<div class="row" style="height:100px;line-height:100px;">-->
+        <!--<div class="col text-center" style="font-size:26px;color:#43cee6;" ng-show="startTimer">{{oneHourCount}}</div>-->
+        <!--</div>-->
+
+        <div class="row {{currentSelectedTheme}}" style="font-size:22px;">
+            <div class="col col-50">{{today}}</div>
+            <div class="col col-50 text-right">{{daysToDueDate}}</div>
+        </div>
+
+        <div class="row row-bottom" style="height:100px; line-height:100px;">
+            <div class="col text-center {{currentSelectedTheme}}" style="font-size:40px;" >{{data.validCount}}/{{data.fetalMoveTimes}}</div>
+        </div>
+
+        <div class="row" data-tap-disabled="true">
+            <a class="button button-outline button-{{currentSelectedTheme}} round-button {{btnKickStyle}}" ng-click="countKicks()" ng-bind-html="btnKickHtml">KICK +1</a>
+        </div>
+
+    </ion-content>
 </ion-view>

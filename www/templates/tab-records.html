@@ -1,13 +1,19 @@
 <ion-view title="Records">
     <!--<ion-nav-buttons side="right">-->
-        <!--<a class="button button-icon icon ion-ios7-refresh-outline" ng-click="refresh()"></a>-->
+    <!--<a class="button button-icon icon ion-ios7-refresh-outline" ng-click="refresh()"></a>-->
     <!--</ion-nav-buttons>-->
-  <ion-content class="has-header">
-    <ion-list>
-      <ion-item ng-repeat="record in records" type="item-text-wrap" href="#/tab/record/{{record.id}}">
-        {{record.id}} &nbsp;
-          <span class="badge badge-{{myTheme}}">{{record.kickCount}} / {{record.actualKicks}}</span>
-      </ion-item>
-    </ion-list>
-  </ion-content>
+    <ion-content class="has-header">
+        <ion-list>
+            <ion-item ng-repeat="record in records" type="item-text-wrap" ng-init="strDate=record.createdAt.toDateString()" href="#/tab/record/{{record.id}}/{{strDate}}" ng-class="'my-item-'+currentSelectedTheme">
+                {{strDate}} &nbsp;
+                <span class="badge badge-{{currentSelectedTheme}}">{{record.get('validCount')}} / {{record.get('fetalMoveTimes')}}</span>
+            </ion-item>
+        </ion-list>
+
+        <div class="card" ng-show="records.length === 0">
+            <div class="item item-text-wrap {{currentSelectedTheme}}">
+                You haven't got any kick records to show. Just press the circle button 'KICK +1' on the counter tab.
+            </div>
+        </div>
+    </ion-content>
 </ion-view>
