@@ -1,0 +1,10 @@
+{
+  "applications": {
+    "SweetKicks": {
+      "applicationId": "DUhmhs2DlPOk73TF5yZag44kdI9EyaqWgFE8lFJS"
+    },
+    "_default": {
+      "link": "SweetKicks"
+    }
+  }
+}
