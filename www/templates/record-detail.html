@@ -5,10 +5,13 @@
   The Records service returns an array of record data
 -->
 <ion-view title="{{strDate}}" cache-view="false">
+    <ion-nav-buttons side="right">
+    <a class="button button-icon icon ion-android-more-vertical" ng-click="openPopover($event)"></a>
+    </ion-nav-buttons>
     <ion-content>
         <ion-list>
             <ion-item ng-repeat="at in actionTimes track by at.getTime()" type="item-text-wrap" ng-class="'my-item-'+currentSelectedTheme">
-                <span class="badge badge-{{currentSelectedTheme}}" style="left:30px;right:auto;">{{$index+1}}</span>
+                <span class="badge badge-{{currentSelectedTheme}}" style="left:30px;right:auto;">{{desc ? actionTimes.length-$index : $index+1}}</span>
                 <span style="float:right;padding-right:20px;">{{at.toLocaleTimeString()}}</span>
             </ion-item>
         </ion-list>

@@ -138,17 +138,75 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services', 'ngCordova'])
 
     })
 
-    .controller('RecordsCtrl', function ($scope, Records, $http) {
+    .controller('RecordsCtrl', function ($scope, $ionicPopover, Records) {
+        var template = '<ion-popover-view style="height:58px;"><ion-content><div class="list"><a class="item" ng-click="sortRecords()">Sort by date</a></div></ion-content></ion-popover-view>';
+
+        $scope.popover = $ionicPopover.fromTemplate(template, {
+            scope: $scope
+        });
+        $scope.openPopover = function($event) {
+            $scope.popover.show($event);
+        };
+        $scope.closePopover = function() {
+            $scope.popover.hide();
+        };
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+            $scope.popover.remove();
+        });
+        // Execute action on hide popover
+        $scope.$on('popover.hidden', function() {
+            // Execute action
+        });
+        // Execute action on remove popover
+        $scope.$on('popover.removed', function() {
+            // Execute action
+        });
+
+        $scope.sortRecords = function() {
+            $scope.records.reverse();
+            $scope.closePopover();
+        };
+
         Records.findByDays().then(function(results) {
-            console.log(results);
+            //console.log(results);
             $scope.records = results;
         });
     })
 
-    .controller('RecordDetailCtrl', function ($scope, $stateParams, Records) {
+    .controller('RecordDetailCtrl', function ($scope, $stateParams, $ionicPopover, Records) {
+        var template = '<ion-popover-view style="height:58px;"><ion-content><div class="list"><a class="item" ng-click="sortByTime()">Sort by time</a></div></ion-content></ion-popover-view>';
+
+        $scope.popover = $ionicPopover.fromTemplate(template, {
+            scope: $scope
+        });
+        $scope.openPopover = function($event) {
+            $scope.popover.show($event);
+        };
+        $scope.closePopover = function() {
+            $scope.popover.hide();
+        };
+        //Cleanup the popover when we're done with it!
+        $scope.$on('$destroy', function() {
+            $scope.popover.remove();
+        });
+        // Execute action on hide popover
+        $scope.$on('popover.hidden', function() {
+            // Execute action
+        });
+        // Execute action on remove popover
+        $scope.$on('popover.removed', function() {
+            // Execute action
+        });
+
+        $scope.sortByTime = function() {
+            $scope.desc = !$scope.desc;
+            $scope.actionTimes.reverse();
+            $scope.closePopover();
+        };
+
         $scope.strDate = $stateParams.strDate;
         $scope.actionTimes = Records.getFetalMoveTimesBySweetKickId($stateParams.recordId);
-        console.log('action times', $scope.actionTimes);
     })
 
     .controller('AccountCtrl', function ($rootScope, $state, $scope, $window, $cordovaDatePicker, Account) {
