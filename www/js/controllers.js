@@ -23,7 +23,7 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services', 'ngCordova'])
         };
 
         function signInUser() {
-            var emailText = $scope.data.user.email.text;
+            var emailText = $scope.data.user.email.text.toLowerCase();
             Parse.User.logIn(emailText, emailText, {
                 success: function(user) {
                     console.log('Parse user =>', user);
@@ -64,7 +64,7 @@ angular.module('sweetkicks.controllers', ['sweetkicks.services', 'ngCordova'])
         };
 
         function createUser() {
-            var emailText = $scope.data.user.email.text;
+            var emailText = $scope.data.user.email.text.toLowerCase();
             var user = new Parse.User();
             user.set("email", emailText);
             user.set("username", emailText);
