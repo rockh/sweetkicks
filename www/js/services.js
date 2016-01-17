@@ -130,7 +130,10 @@ angular.module('sweetkicks.services', [])
                             sk.set('fetalMovedAt', [today]);
                             sk.set('user', u);
                             sk.setACL(new Parse.ACL(u));
-                            return sk.save();
+                            return sk.save().then(function(newSavedSK) {
+                                records.push(newSavedSK);
+                                return newSavedSK;
+                            });
                         }
                     },
                     function(error) {
